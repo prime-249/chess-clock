@@ -3,6 +3,14 @@
 
 #include <Arduino.h>
 
+enum class GameState {
+  STOPPED,   // prima di iniziare
+  RUNNING,   // partita in corso
+  PAUSED,    // pausa manuale
+  GAME_OVER  // tempo finito
+};
+
+
 class ChessClock {
   public:
     ChessClock(unsigned long startTimeMs); // Inizializza con tempo di partenza
@@ -12,12 +20,16 @@ class ChessClock {
     void switchTurn(); // Alterna il turno
 
     void pause(); // Mette la partita in pausa (running = false)
+    void resume(); // Riprende la partita dalla pausa
+
+    void update();
+
+    GameState getState() const;
 
     unsigned long getWhiteTime() const; // Estrapola il tempo del bianco per il display
     unsigned long getBlackTime() const; // Estrapola il tempo del nero per il display
 
     bool isWhiteTurn() const; // Verifica di chi è il turno
-    bool isRunning() const; // Verifica se la partita è iniziata/è in pausa
 
   private:
     unsigned long timeWhite; // Tempo del bianco
@@ -25,8 +37,9 @@ class ChessClock {
 
     unsigned long lastSwitchTime; // Registra l'ultimo switch per far correttamente scorrere il tempo di uno o l'altro giocatore
     bool whiteTurn; // è il turno del bianco?
-    bool running; // la partita è in pausa?
 
+    GameState state;
+    
     unsigned long currentMillis() const; // tempo corrente
 };
 
